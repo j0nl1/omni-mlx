@@ -1,0 +1,68 @@
+schema_version = 1
+
+[server]
+host = "127.0.0.1"
+port = 8080
+# Optional additional fixed client key; managed keys do not require this variable.
+# api_key_env = "OMNI_MLX_API_KEY"
+max_upload_bytes = 26214400
+max_output_bytes = 33554432
+max_text_characters = 8192
+max_audio_seconds = 600
+
+# The administration listener always binds to 127.0.0.1. It has no login.
+[admin]
+port = 8081
+keys_file = "state/api-keys.json"
+# Optional client-facing audio API URL displayed in the panel.
+# audio_api_url = "https://audio.example.test/v1"
+
+# Optional MCP endpoint on the audio listener. Include exact proxy/client origins.
+# [mcp]
+# allowed_origins = ["https://audio.example.test"]
+
+[assets]
+root = "assets"
+
+[backends.local]
+mode = "embedded"
+resource_group = "local_gpu"
+
+[resource_groups.local_gpu]
+max_in_flight = 1
+queue_capacity = 16
+request_timeout_seconds = 300
+
+[models.tts]
+operation = "speech"
+backend = "local"
+source = ".models/qwen3-base"
+profile = "qwen3_base"
+
+[models.tts.generation]
+max_tokens = 4096
+temperature = 0.9
+top_p = 1.0
+top_k = 50
+repetition_penalty = 1.05
+max_speech_seconds = 300
+
+[models.stt]
+operation = "transcription"
+backend = "local"
+source = ".models/whisper"
+profile = "whisper"
+
+[models.stt.generation]
+max_tokens = 432
+temperature = 0.0
+
+[voices.narrator]
+display_name = "Narrator"
+description = "Operator-provided reference voice"
+
+[voices.narrator.bindings.tts]
+kind = "reference"
+locale = "en-US"
+audio = "voices/narrator/reference.wav"
+transcript = "voices/narrator/reference.txt"

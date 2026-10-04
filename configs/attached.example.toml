@@ -1,0 +1,42 @@
+schema_version = 1
+
+[server]
+host = "127.0.0.1"
+port = 8080
+# Optional additional fixed client key; managed keys do not require this variable.
+# api_key_env = "OMNI_MLX_API_KEY"
+
+# The administration listener always binds to 127.0.0.1. It has no login.
+[admin]
+port = 8081
+keys_file = "state/api-keys.json"
+
+[assets]
+root = "assets"
+
+[backends.remote]
+mode = "attached"
+# The upstream audio listener, not its administration port or /v1 base URL.
+base_url = "http://127.0.0.1:9080"
+api_key_env = "OMNI_MLX_UPSTREAM_API_KEY"
+resource_group = "remote_gpu"
+
+[resource_groups.remote_gpu]
+max_in_flight = 1
+queue_capacity = 16
+request_timeout_seconds = 300
+
+[models.tts]
+operation = "speech"
+backend = "remote"
+
+[models.stt]
+operation = "transcription"
+backend = "remote"
+
+[voices.narrator]
+display_name = "Narrator"
+
+[voices.narrator.bindings.tts]
+kind = "reference"
+locale = "en-US"
